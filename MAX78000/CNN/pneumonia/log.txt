@@ -1,0 +1,5 @@
+ai8xize.py --test-dir D:/KRIZZ/MaximSDK/Examples/MAX78000/CNN --prefix pneumonia --checkpoint-file D:/KRIZZ/COE187/ai8x-synthesis/trained/ai85-pneumonia-qat8-q.pth.tar --config-file networks/pneumonia-hwc.yaml --fifo --softmax --device MAX78000 --timer 0 --display-checkpoint --verbose
+MAX78000
+
+pneumonia
+ERROR: Layer 6: 5 input channels (before flattening) using 1 pass, and 1 operand (5 processors per pass), but the enabled processor map 0x000000000000ffff has 16 bits instead of the expected number of 5.

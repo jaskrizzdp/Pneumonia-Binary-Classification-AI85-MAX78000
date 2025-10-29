@@ -1,0 +1,195 @@
+# ---
+# # HWC configuration for Pneumonia image classification
+
+# arch: ai85cdnet
+# dataset: pneumonia
+
+
+# # Define layer parameters in order of the layer sequence
+# layers:
+#   - pad: 1
+#     activate: ReLU
+#     out_offset: 0x1000
+#     processors: 0x0000000000000007
+#     data_format: HWC
+#     operation: Conv2d
+#     streaming: true
+
+#   - max_pool: 2
+#     pool_stride: 2
+#     pad: 1
+#     activate: ReLU
+#     out_offset: 0x2000
+#     processors: 0x000ffff000000000
+#     operation: Conv2d
+#     streaming: true
+
+#   - max_pool: 2
+#     pool_stride: 2
+#     pad: 1
+#     activate: ReLU
+#     out_offset: 0x0000
+#     processors: 0x00000000ffffffff
+#     operation: Conv2d
+
+#   - max_pool: 2
+#     pool_stride: 2
+#     pad: 1
+#     activate: ReLU
+#     out_offset: 0x2000
+#     processors: 0xffffffffffffffff
+#     operation: Conv2d
+
+#   - max_pool: 2
+#     pool_stride: 2
+#     pad: 1
+#     activate: ReLU
+#     out_offset: 0x0000
+#     processors: 0x00000000ffffffff
+#     operation: Conv2d
+
+#   - pad: 1
+#     activate: ReLU
+#     out_offset: 0x2000
+#     processors: 0xffffffff00000000
+#     operation: Conv2d
+
+#   - op: mlp
+#     flatten: true
+#     out_offset: 0x1000
+#     output_width: 32     # ✅ Fixed: must be 8 or 32
+#     processors: 0x000000000000ffff
+#     activate: None
+
+
+
+
+
+
+
+
+# # #version 2 - slight working
+
+# ---
+# # HWC configuration for Pneumonia image classification (optimized for 64x64 input)
+
+# arch: ai85cdnet
+# dataset: pneumonia
+
+# layers:
+#   - pad: 1
+#     activate: ReLU
+#     out_offset: 0x1000
+#     processors: 0x0000000000000007
+#     data_format: HWC
+#     operation: Conv2d
+#     streaming: true
+
+#   - max_pool: 2
+#     pool_stride: 2
+#     pad: 0              # 🟢 changed from 1 → 0
+#     activate: ReLU
+#     out_offset: 0x2000
+#     processors: 0x000ffff000000000
+#     operation: Conv2d
+#     streaming: true
+
+#   - max_pool: 2
+#     pool_stride: 2
+#     pad: 0              # 🟢 changed from 1 → 0
+#     activate: ReLU
+#     out_offset: 0x0000
+#     processors: 0x00000000ffffffff
+#     operation: Conv2d
+
+#   - max_pool: 2
+#     pool_stride: 2
+#     pad: 0              # 🟢 changed from 1 → 0
+#     activate: ReLU
+#     out_offset: 0x2000
+#     processors: 0xffffffffffffffff
+#     operation: Conv2d
+
+#   # 🟡 Removed one pooling layer here to prevent zero dimension
+
+#   - pad: 1
+#     activate: ReLU
+#     out_offset: 0x2000
+#     processors: 0xffffffff00000000
+#     operation: Conv2d
+
+#   - op: mlp
+#     flatten: true
+#     out_offset: 0x1000
+#     output_width: 32
+#     processors: 0x000000000000ffff
+#     activate: None
+
+
+
+
+---
+arch: ai85cdnet
+dataset: pneumonia
+
+layers:
+  # Layer 1
+  - pad: 1
+    kernel_size: 3x3
+    activate: ReLU
+    out_offset: 0x1000
+    processors: 0x7             # 3 bits for RGB or first 3 channels
+    data_format: HWC
+    operation: Conv2d
+    streaming: true
+
+  # Layer 2 (pooling removed to avoid zero-width)
+  - pad: 1
+    kernel_size: 3x3
+    activate: ReLU
+    out_offset: 0x2000
+    processors: 0x000ffff000000000
+    operation: Conv2d
+    streaming: true
+
+  # Layer 3 (pooling removed / stride=1 to keep width=1)
+  - pad: 1
+    kernel_size: 3x3
+    activate: ReLU
+    out_offset: 0x0000
+    processors: 0x00000000ffffffff
+    operation: Conv2d
+
+  # Layer 4 (optional pooling, stride=1)
+  - max_pool: 1
+    pool_stride: 1
+    pad: 1
+    kernel_size: 3x3
+    activate: ReLU
+    out_offset: 0x2000
+    processors: 0xffffffffffffffff
+    operation: Conv2d
+
+  # Layer 5
+  - pad: 1
+    kernel_size: 3x3
+    activate: ReLU
+    out_offset: 0x2000
+    processors: 0xffffffff00000000
+    operation: Conv2d
+
+  # Layer 6 (processor map fixed to match input channels)
+  - pad: 1
+    kernel_size: 3x3
+    activate: ReLU
+    out_offset: 0x1000
+    processors: 0x1F            # 5 input channels → 0b11111
+    operation: Conv2d
+
+  # Fully connected / MLP layer
+  - op: mlp
+    flatten: true
+    out_offset: 0x1000
+    output_width: 32            # 32-bit bus width for MAX78000
+    processors: 0x000000000000ffff
+    activate: None
