@@ -1,6 +1,6 @@
 # Pneumonia Binary Classification Using AI85/MAX78000
 
-**Binary image classification of Healthy vs Pneumonia using the AI85 platform on MAX78000 microcontroller. ( Deployment On-going )**
+**Binary image classification of Healthy vs Pneumonia using the AI85 platform on MAX78000 microcontroller. ( Deployment Ongoing )**
 
 ---
 
