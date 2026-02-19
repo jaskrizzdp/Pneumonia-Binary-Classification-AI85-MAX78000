@@ -23,9 +23,9 @@ This project demonstrates how a high‑performance AI model can be deployed on u
 
 ## How It Works
 
-1. **Dataset Preparation**: Chest X‑ray images are obtained from open-source datasets and labeled as Healthy or Pneumonia. 
+1. **Dataset Preparation**: Chest X‑ray images are obtained from open-source datasets and labeled as Healthy or Pneumonia.  
 2. **Model Training**: A binary classifier is trained to differentiate between the two classes.  
 3. **AI85 Optimization**: The trained model is optimized for the AI85/MAX78000 inference engine.  
-4. **Deployment**: The optimized model is deployed to the MAX78000 for real‑time classification.  
-5. **Inference**: The MAX78000 processes incoming images and outputs predictions at edge‑AI speeds.  
+4. **Deployment (Ongoing)**: Deployment to the MAX78000 is in progress; edge inference will be available once finalized.  
+5. **Inference**: The MAX78000 will process incoming images and output predictions at edge‑AI speeds once deployment is complete.
 
